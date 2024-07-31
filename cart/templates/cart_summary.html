@@ -1,0 +1,225 @@
+
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">About Us.....</h1>
+            <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+        </div>
+    </div>
+</header>  <br/>
+
+
+<!-- {{ cart_products }} -->
+
+{% if cart_products %}
+    
+
+    
+
+
+{% for products in cart_products %}
+
+<div class="card mb-3" style="max-width: 800px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="{{ products.image.url }}" class="img-fluid rounded-start" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{ products.name }}</h5>
+          <p class="card-text">{{ products.description }}</p>
+          
+          {% if products.is_sale %}
+          <div class="text-center">
+            <h5 class="fw-bolder">{{products.name}}</h5>
+            <strike>{{products.price}}</strike> &nbsp;
+            {{products.sale_price}} <br />
+            {{products.description}}
+          </div>
+          {% else %}
+          <div class="text-center">
+            <h5 class="fw-bolder">{{products.name}}</h5>
+            {{products.price}} &nbsp;
+            <h3>Product Id: {{products.id}}</h3> &nbsp;
+          </div>
+          {% endif %}
+          <br/>  
+          {{ quantities }}
+
+
+          <!-- Option -2 ------------------------- -->
+
+ 
+     
+
+          <!-- <select class="form-select form-select-sm" id="qty-cart">
+            {% for key, value in quantities.items %}
+              <option value="{{ key }}" {% if key == product.id|slugify %}selected{% endif %}>
+
+                {{ value }}
+              
+              </option>
+            {% endfor %}
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select> -->
+    
+
+<!-- 
+   Option -1 -->
+          <!-- <select class="form-select form-select-sm" id="qty-cart">
+            {% for key, value in quantities.items %}
+              <option value="{{ key }}">{{ value }}</option> 
+           {% endfor %}
+          </select> -->
+
+              
+          <!-- Option - 2 updated
+          <select class="form-select form-select-sm" id="qty-cart">
+            {% for key, value in quantities.items %}
+              <option value="{{ key }}" >
+
+                {{ value }}
+              
+              </option>
+            {% endfor %}
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select> -->
+
+
+
+          
+
+       <!-- Main code frim tutorial -->
+           <div class="row justify-content-center">
+            <div class="col-md-2">Quantity:</div>
+                        <div class="col-md-2">
+                        <select class="form-select form-select-sm" id="select{{products.id}}">
+                          
+                    {% for key, value in quantities.items %}
+                        {% if key == products.id|slugify %}
+
+                    <option selected>{{ value}}</option>
+                        {% endif %}
+                    {% endfor %}
+                                   
+        
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                        </select>
+                        </div>
+                    </div> 
+    
+          <br/>
+
+          <a class='btn btn-secondary' href="{% url 'home' %}"> Home</a>
+
+          <button type="button" data-index="{{products.id}}" class="btn btn-secondary update-cart"  >Update</button>
+          
+          <button type="button" data-index="{{products.id}}" class="btn btn-danger delete-cart"  >Remove</button>
+
+          <!-- <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p> -->
+        </div>
+      </div>
+    </div>
+</div>
+    
+{% endfor %}
+
+           <div align="right">
+            <h1>Total: {{totals}}</h1>
+            <a href="{% url 'checkout' %}" class="btn btn-success"> Checkout</a>
+           </div>
+          
+{% else %}
+<h1> Nothing in the Cart... </h1>
+
+
+{% endif %}
+
+
+<script>
+  $(document).on('click','.update-cart', function(e){
+      e.preventDefault();
+      // Get value of the clicked button
+      var productid = $(this).data('index');
+      $.ajax({
+          type: 'POST',
+          url: '{% url 'cart_update' %}',
+          data: {
+              product_id: $(this).data('index'),
+              product_qty: $('#select' + productid + ' option:selected').text(),
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              action: 'post',
+          },
+          success: function(json){
+              // console.log(json);
+              // document.getElementById("cart_quantity").textContent = json.qty
+              location.reload();
+              
+          },
+          error: function(xhr, errmsg, err){
+  
+          }
+      });
+  });
+
+
+
+
+
+    //  delete cart
+  
+    $(document).on('click','.delete-cart', function(e){
+      e.preventDefault();
+      // Get value of the clicked button
+      $.ajax({
+          type: 'POST',
+          url: "{% url 'cart_delete' %}",
+          data: {
+              product_id: $(this).data('index'),
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+              action: 'post',
+          },
+          success: function(json){
+              // console.log(json);
+              // document.getElementById("cart_quantity").textContent = json.qty
+              location.reload();
+              
+          },
+          error: function(xhr, errmsg, err){
+  
+          }
+      });
+  });
+
+  </script> 
+
+
+    
+
+
+{% endblock  %}
+
+       
+
+
+   
+       
+        
+

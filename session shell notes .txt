@@ -1,0 +1,9 @@
+py manage.py shell
+
+>>> from django.contrib.sessions.models import Session
+
+>>> session_x = Session.objects.get(pk='bzr580qh54kikn70507dzfldrun5tn33') 
+
+>>> session_x.get_decoded()  
+{'_auth_user_id': '1', '_auth_user_backend': 'django.contrib.auth.backends.ModelBackend', '_auth_user_hash': 'eb29e20e7f4b5aa22d7d8bb3259de54a1948c3ada5ed6d25517cacd3cea63a7b', 'session_key': {}}
+>>>
